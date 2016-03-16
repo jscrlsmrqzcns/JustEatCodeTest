@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Configuration;
 
 namespace JustEatCodeTestWeb.Services.Restaurants.JustEatRestaurantService
 {
@@ -15,16 +15,16 @@ namespace JustEatCodeTestWeb.Services.Restaurants.JustEatRestaurantService
 
         public static JustEatRestaurantServiceConfiguration FromApplicationConfig()
         {
-            // TODO read from Web.config
+            // TODO rather than AppSettings, use custom config section (cleaner)
             return new JustEatRestaurantServiceConfiguration()
-            {
-                Host = "public.je-apis.com",
-                AcceptLanguage = "en-GB",
-                AcceptTenant = "uk",
-                AuthorizationParameter = "VGVjaFRlc3RBUEk6dXNlcjI=",
-                AuthorizationScheme = "Basic",
-                BaseAddress = "https://public.je-apis.com/restaurants",
-                OutCodeParameterFormat = "?q={0}"
+            {                
+                Host = ConfigurationManager.AppSettings["RestaurantServiceHost"],
+                AcceptLanguage = ConfigurationManager.AppSettings["RestaurantServiceAcceptLanguage"],
+                AcceptTenant = ConfigurationManager.AppSettings["RestaurantServiceAcceptTenant"],
+                AuthorizationParameter = ConfigurationManager.AppSettings["RestaurantServiceAuthorizationParameter"],
+                AuthorizationScheme = ConfigurationManager.AppSettings["RestaurantServiceAuthorizationScheme"],
+                BaseAddress = ConfigurationManager.AppSettings["RestaurantServiceBaseAddress"],
+                OutCodeParameterFormat = ConfigurationManager.AppSettings["RestaurantServiceOutCodeParameterFormat"]
             };
         }
     }
