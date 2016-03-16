@@ -1,0 +1,22 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Find Restaurants</title>
+</head>
+<body>
+    <div> 
+        @using (Html.BeginForm("GetByOutCode", "Restaurants"))
+        {
+            <input type="text" name="OutCode" value="se19" />
+            <input type="submit" value="search" />
+        }
+    </div>
+</body>
+</html>
