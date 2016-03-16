@@ -8,6 +8,9 @@ using System.Web;
 
 namespace JustEatCodeTestWeb.Services.Restaurants.JustEatRestaurantService
 {
+    /// Note: call the service from the server instead of the browser for various reasons like 
+    /// - security: Auth info is keept safe in the server and requests originate from our servers only
+    /// - performance/reliability/availability: api results can be cached/mirrored 
     public class JustEatRestaurantServiceImplementation : IRestaurantService
     {
         private readonly IJustEatRestaurantServiceConfiguration _serviceConfiguration;
@@ -18,48 +21,40 @@ namespace JustEatCodeTestWeb.Services.Restaurants.JustEatRestaurantService
             // Also, in some cases it will be possible to adapt to service changes with a simple configuration adjustment
             _serviceConfiguration = serviceConfiguration;
         }
-
+        
         public async Task<IEnumerable<IRestaurant>> GetByOutCodeAsync(string outCode)
         {
-            try
+            using (var client = new HttpClient())
             {
-                using (var client = new HttpClient())
+                client.BaseAddress = new Uri(_serviceConfiguration.BaseAddress);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Host = _serviceConfiguration.Host;
+                client.DefaultRequestHeaders.Add("Accept-Tenant", _serviceConfiguration.AcceptTenant);
+                client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(_serviceConfiguration.AcceptLanguage));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_serviceConfiguration.AuthorizationScheme,
+                                                                                            _serviceConfiguration.AuthorizationParameter);                    
+
+                var result = await client.GetAsync(string.Format(_serviceConfiguration.OutCodeParameterFormat, outCode));
+
+                if (result.IsSuccessStatusCode)
                 {
-                    client.BaseAddress = new Uri(_serviceConfiguration.BaseAddress);
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Host = _serviceConfiguration.Host;
-                    client.DefaultRequestHeaders.Add("Accept-Tenant", _serviceConfiguration.AcceptTenant);
-                    client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(_serviceConfiguration.AcceptLanguage));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_serviceConfiguration.AuthorizationScheme,
-                                                                                               _serviceConfiguration.AuthorizationParameter);                    
+                    var restaurantsByOutCodeResponse = await result.Content.ReadAsAsync<RestaurantsByOutCodeResponse>();
 
-                    var result = await client.GetAsync(string.Format(_serviceConfiguration.OutCodeParameterFormat, outCode));
+                    if (restaurantsByOutCodeResponse == null || restaurantsByOutCodeResponse.Restaurants == null)
+                        return new List<IRestaurant>(0);
 
-                    if (result.IsSuccessStatusCode)
+
+                    return restaurantsByOutCodeResponse.Restaurants.Select(r => new RestaurantResult()
                     {
-                        var restaurantsByOutCodeResponse = await result.Content.ReadAsAsync<RestaurantsByOutCodeResponse>();
-
-                        if (restaurantsByOutCodeResponse == null || restaurantsByOutCodeResponse.Restaurants == null)
-                            return new List<IRestaurant>(0);
-
-
-                        return restaurantsByOutCodeResponse.Restaurants.Select(r => new RestaurantResult()
-                        {
-                            Name = r.Name,
-                            Rating = r.RatingStars,
-                            CusineTypes = r.CuisineTypes == null ? null : r.CuisineTypes.Select(ct => ct.Name)
-                        });
-                    }
-                    else
-                    {
-                        throw new Exception(string.Format("({0}): {1}", (int)result.StatusCode, result.ReasonPhrase));
-                    }
+                        Name = r.Name,
+                        Rating = r.RatingStars,
+                        CusineTypes = r.CuisineTypes == null ? null : r.CuisineTypes.Select(ct => ct.Name)
+                    });
                 }
-            }
-            catch (Exception ex)
-            {
-                // TODO timeout etc
-                throw ex; // this is bad
+                else
+                {
+                    throw new Exception(string.Format("Error querying restaurant service ({0}): {1}", (int)result.StatusCode, result.ReasonPhrase));
+                }
             }
         }
 

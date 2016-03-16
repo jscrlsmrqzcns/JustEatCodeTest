@@ -1,22 +1,13 @@
-﻿
-@{
-    Layout = null;
+﻿@{
+    ViewBag.Title = "Find Restaurants";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
+<div class="center">
+    @using (Html.BeginForm("GetByOutCode", "Restaurants"))
+    {
+        <input type="text" name="OutCode" value="" placeholder="Enter postcode" required />
+        <input type="submit" value="Find takeaways" />
+    }
+</div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Find Restaurants</title>
-</head>
-<body>
-    <div> 
-        @using (Html.BeginForm("GetByOutCode", "Restaurants"))
-        {
-            <input type="text" name="OutCode" value="se19" />
-            <input type="submit" value="search" />
-        }
-    </div>
-</body>
-</html>

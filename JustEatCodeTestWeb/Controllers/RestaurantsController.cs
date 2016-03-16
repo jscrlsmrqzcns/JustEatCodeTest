@@ -17,6 +17,7 @@ namespace JustEatCodeTestWeb.Controllers
             _restaurantService = restaurantService;
         }
 
+        // Note: Async controller using async service to avoid blocking worker thread
         public async Task<ActionResult> GetByOutCode(string outCode)
         {
             var restaurants = await _restaurantService.GetByOutCodeAsync(outCode);
