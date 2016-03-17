@@ -7,6 +7,8 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.Http;
+using JustEatCodeTestWeb.App_Start;
+using System.Web.Optimization;
 
 namespace JustEatCodeTestWeb
 {
@@ -17,7 +19,8 @@ namespace JustEatCodeTestWeb
             // Code that runs on application startup
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);            
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
         protected void Application_Error(object sender, EventArgs e)

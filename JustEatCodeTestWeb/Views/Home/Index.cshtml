@@ -2,12 +2,67 @@
     ViewBag.Title = "Find Restaurants";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<div class="center">
-    @using (Html.BeginForm("GetByOutCode", "Restaurants"))
-    {
-        <input type="text" name="OutCode" value="" placeholder="Enter postcode" required />
-        <input type="submit" value="Find takeaways" />
-    }
+<div id="app" ng-app="app" ng-controller="restaurantSearchController" style="display: none;">
+    <div class="row">            
+        <div class="col-md-6 col-md-offset-3">
+            <form name="search" ng-submit="control.searchRestaurants()" style="padding-bottom: 20px;">
+                <div id="search-box" class="input-group">
+                    <input class="form-control" type="text" name="OutCode" value="" placeholder="Enter postcode" ng-model="outCode" ng-required="true" />
+                    <span class="input-group-btn">
+                        <input class="btn btn-default" type="submit" value="Find takeaways" ng-disabled="search.OutCode.$error.required || searching" />
+                    </span>                    
+                </div>
+            </form>
+            <div id="search-results" ng-show="queried && !searching">
+                <table class="table-responsive">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>Name</th>
+                            <th>Rating</th>
+                            <th>Cusines</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="restaurant in restaurants track by restaurant.Id">
+                            <td><img ng-src="{{restaurant.LogoUrl}}" ng-if="restaurant.LogoUrl" /></td>
+                            <td>{{restaurant.Name}}</td>
+                            <td>{{restaurant.Rating}}</td>
+                            <td><span ng-repeat="cusine in restaurant.CusineTypes">{{cusine}}<span ng-show="!$last && restaurant.CusineTypes.length > 1">,</span></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="searching" ng-show="searching">Searching...</div>
+            <div id="search-error" class="alert alert-warning panel-danger" ng-show="errored">
+                {{errorMessage}}
+            </div>
+        </div>        
+    </div>
 </div>
+<script>
+    document.getElementById("app").style.display = "block";
 
+    @{
+        var urlPrefix = HttpContext.Current.Request.ApplicationPath;
+        if (urlPrefix.Length == 1)
+        {
+            urlPrefix = "";
+        }
+    }
+
+    var urlPrefix = "@urlPrefix";
+</script>
+<noscript>
+    <div class="center">
+        @using (Html.BeginForm("GetByOutCode", "Restaurants"))
+        {
+            <div id="no-script-search-box" class="input-group">
+                <input class="form-control" type="text" name="OutCode" value="" placeholder="Enter postcode" required />
+                <span class="input-group-btn">
+                    <input class="btn btn-default" type="submit" value="Find takeaways" />
+                </span>
+            </div>
+        }
+    </div>
+</noscript>

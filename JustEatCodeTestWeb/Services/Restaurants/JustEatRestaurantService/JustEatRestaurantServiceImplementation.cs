@@ -46,9 +46,11 @@ namespace JustEatCodeTestWeb.Services.Restaurants.JustEatRestaurantService
 
                     return restaurantsByOutCodeResponse.Restaurants.Select(r => new RestaurantResult()
                     {
+                        Id = r.Id,
                         Name = r.Name,
                         Rating = r.RatingStars,
-                        CusineTypes = r.CuisineTypes == null ? null : r.CuisineTypes.Select(ct => ct.Name)
+                        CusineTypes = r.CuisineTypes == null ? null : r.CuisineTypes.Select(ct => ct.Name),
+                        LogoUrl = r.Logo == null ? null : r.Logo.First().StandardResolutionURL
                     });
                 }
                 else
@@ -61,9 +63,11 @@ namespace JustEatCodeTestWeb.Services.Restaurants.JustEatRestaurantService
 
         private class RestaurantResult : IRestaurant
         {
-            public string Name { get; set; }
-            public decimal? Rating { get; set; }
-            public IEnumerable<string> CusineTypes { get; set; }
+            public int Id { get; internal set; }
+            public string Name { get; internal set; }
+            public decimal? Rating { get; internal set; }
+            public IEnumerable<string> CusineTypes { get; internal set; }
+            public string LogoUrl { get; internal set; }
         }
     }
 }

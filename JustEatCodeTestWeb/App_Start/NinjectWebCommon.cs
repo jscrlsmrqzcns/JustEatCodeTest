@@ -12,6 +12,7 @@ namespace JustEatCodeTestWeb.App_Start
     using Ninject.Web.Common;
     using Services.Restaurants.JustEatRestaurantService;
     using Services.Restaurants;
+    using Ninject.Web.Mvc;
     public static class NinjectWebCommon 
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
@@ -45,6 +46,7 @@ namespace JustEatCodeTestWeb.App_Start
             {
                 kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
                 kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
+                System.Web.Http.GlobalConfiguration.Configuration.DependencyResolver = new Ninject.Web.WebApi.NinjectDependencyResolver(kernel);
 
                 RegisterServices(kernel);
                 return kernel;
