@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustEatCodeTestWeb", "JustE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustEatCodeTestWeb.Tests", "JustEatCodeTestWeb.Tests\JustEatCodeTestWeb.Tests.csproj", "{18317F69-9F0B-42FF-A89A-9213A1C324A3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7EF61A9F-40CA-4C8D-AFFE-3C9DD6AD7895}"
+	ProjectSection(SolutionItems) = preProject
+		Answers to technical questions.md = Answers to technical questions.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
