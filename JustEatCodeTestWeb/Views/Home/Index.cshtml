@@ -7,14 +7,14 @@
         <div class="col-md-6 col-md-offset-3">
             <form name="search" ng-submit="control.searchRestaurants()" style="padding-bottom: 20px;">
                 <div id="search-box" class="input-group">
-                    <input class="form-control" type="text" name="OutCode" value="" placeholder="Enter postcode" ng-model="outCode" ng-required="true" />
+                    <input id="search-input" class="form-control" type="text" name="OutCode" value="" placeholder="Enter postcode" ng-model="outCode" ng-required="true" />
                     <span class="input-group-btn">
-                        <input class="btn btn-default" type="submit" value="Find takeaways" ng-disabled="search.OutCode.$error.required || searching" />
+                        <input id="search-btn" class="btn btn-default" type="submit" value="Find takeaways" ng-disabled="search.OutCode.$error.required || searching" />
                     </span>                    
                 </div>
             </form>
             <div id="search-results" ng-show="queried && !searching">
-                <table class="table-responsive">
+                <table id="table-serch-results" class="table-responsive">
                     <thead>
                         <tr>
                             <th>&nbsp;</th>
@@ -24,7 +24,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="restaurant in restaurants track by restaurant.Id">
+                        <tr id="result-{{restaurat.Id}}" ng-repeat="restaurant in restaurants track by restaurant.Id">
                             <td><img ng-src="{{restaurant.LogoUrl}}" ng-if="restaurant.LogoUrl" /></td>
                             <td>{{restaurant.Name}}</td>
                             <td>{{restaurant.Rating}}</td>

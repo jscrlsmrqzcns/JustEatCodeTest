@@ -69,6 +69,26 @@ namespace JustEatCodeTestWeb.Tests.Controllers
             AssertRestaurantEquals(restaurant2, restaurants.Single(r => r.Id == 2));
         }
 
+        [TestMethod]
+        public void Get_DistinctCusine()
+        {
+            var restaurant1 = Mock.Of<IRestaurant>(r => r.Id == 1 && r.Name == "L'Entrecote" && r.Rating == 4.9m
+            && r.CusineTypes == new string[] { "French", "parisian", "french" });
+
+            var restaurantServiceMock = new Mock<IRestaurantService>();
+            restaurantServiceMock.Setup(rs => rs.GetByOutCodeAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult((IEnumerable<IRestaurant>)new List<IRestaurant>()
+                {
+                    restaurant1
+                }));
+
+            var restaurantApiController = new RestaurantsApiController(restaurantServiceMock.Object);
+            var restaurants = restaurantApiController.Get("foo").Result;
+            Assert.AreEqual(2, restaurants.Single().CusineTypes.Count());
+            Assert.AreEqual(1, restaurants.Single().CusineTypes.Count(c => "french".Equals(c, StringComparison.InvariantCultureIgnoreCase)));
+            Assert.AreEqual(1, restaurants.Single().CusineTypes.Count(c => "parisian".Equals(c, StringComparison.InvariantCultureIgnoreCase)));
+        }
+
         private void AssertRestaurantEquals(IRestaurant rx, RestaurantViewJsonModel ry)
         {
             Assert.AreEqual(rx.Id, ry.Id);

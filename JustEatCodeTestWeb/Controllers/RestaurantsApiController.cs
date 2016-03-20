@@ -31,7 +31,8 @@ namespace JustEatCodeTestWeb.Controllers
                 Id = r.Id,
                 Name = r.Name,
                 Rating = r.Rating,
-                CusineTypes = r.CusineTypes,
+                CusineTypes = r.CusineTypes == null ? null
+                                : r.CusineTypes.Distinct(StringComparer.InvariantCultureIgnoreCase),
                 LogoUrl = r.LogoUrl
             }).GroupBy(r => r.Id).Select(g => g.First()); // filter repeated
         }

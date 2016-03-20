@@ -65,7 +65,11 @@ namespace JustEatCodeTestWeb.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<IJustEatRestaurantServiceConfiguration>().ToConstant(JustEatRestaurantServiceConfiguration.FromApplicationConfig());
-            kernel.Bind<IRestaurantService>().To<JustEatRestaurantServiceImplementation>();
+            kernel.Bind<JustEatRestaurantServiceImplementation>().ToSelf();
+            kernel.Bind<IRestaurantService>().To<CachedRestaurantService>()
+                .WithConstructorArgument("cacheTimeoutSeconds", 30 * 60) // TODO use cache confguration timeout parameter is only for testing
+                .WithConstructorArgument<IRestaurantService>(kernel.Get<JustEatRestaurantServiceImplementation>());
+            
         }        
     }
 }
